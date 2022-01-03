@@ -20,6 +20,7 @@
 
 #include "loop_epoll.h"
 #include "io.h"
+#include "threadpool.h"
 
 #define USER_LIMIT 10
 #define BUF_SIZE 64
