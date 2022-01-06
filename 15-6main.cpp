@@ -12,8 +12,7 @@
 
 #include "locker.h"
 #include "threadpool.h"
-#include "my_request.h"
-//#include "sockfd.h"
+#include "http_conn.h"
 
 #define MAX_FD 65536
 #define MAX_EVENT_NUMBER 10000
@@ -54,21 +53,19 @@ int main( int argc, char* argv[] )
 
     addsig( SIGPIPE, SIG_IGN );
 
-    threadpool< my_request >* pool = NULL;
+    threadpool< http_conn >* pool = NULL;
     try
     {
-        pool = new threadpool< my_request >;
+        pool = new threadpool< http_conn >;
     }
     catch( ... )
     {
         return 1;
     }
 
-    my_request* users = new my_request[ MAX_FD ];
+    http_conn* users = new http_conn[ MAX_FD ];
     assert( users );
-    //int user_count = 0;
-	//my_request::all_requests = users;
-	std::unordered_map<std::string, int> map;
+    int user_count = 0;
 
     int listenfd = socket( PF_INET, SOCK_STREAM, 0 );
     assert( listenfd >= 0 );
@@ -92,11 +89,10 @@ int main( int argc, char* argv[] )
     int epollfd = epoll_create( 5 );
     assert( epollfd != -1 );
     addfd( epollfd, listenfd, false );
-    my_request::m_epollfd = epollfd;
+    http_conn::m_epollfd = epollfd;
 
     while( true )
     {
-		printf("epoll wait now ... \n");
         int number = epoll_wait( epollfd, events, MAX_EVENT_NUMBER, -1 );
         if ( ( number < 0 ) && ( errno != EINTR ) )
         {
@@ -109,7 +105,6 @@ int main( int argc, char* argv[] )
             int sockfd = events[i].data.fd;
             if( sockfd == listenfd )
             {
-				printf("new user comes.\n");
                 struct sockaddr_in client_address;
                 socklen_t client_addrlength = sizeof( client_address );
                 int connfd = accept( listenfd, ( struct sockaddr* )&client_address, &client_addrlength );
@@ -118,13 +113,13 @@ int main( int argc, char* argv[] )
                     printf( "errno is: %d\n", errno );
                     continue;
                 }
-                if( my_request::m_user_count >= MAX_FD )
+                if( http_conn::m_user_count >= MAX_FD )
                 {
                     show_error( connfd, "Internal server busy" );
                     continue;
                 }
                 
-                users[connfd].init( connfd, client_address, &map, users );
+                users[connfd].init( connfd, client_address );
             }
             else if( events[i].events & ( EPOLLRDHUP | EPOLLHUP | EPOLLERR ) )
             {
@@ -132,8 +127,7 @@ int main( int argc, char* argv[] )
             }
             else if( events[i].events & EPOLLIN )
             {
-                printf("EPOLLIN.\n");
-				if( users[sockfd].read() )
+                if( users[sockfd].read() )
                 {
                     pool->append( users + sockfd );
                 }
@@ -144,7 +138,6 @@ int main( int argc, char* argv[] )
             }
             else if( events[i].events & EPOLLOUT )
             {
-                printf("EPOLLOUT.\n");
                 if( !users[sockfd].write() )
                 {
                     users[sockfd].close_conn();
@@ -161,4 +154,3 @@ int main( int argc, char* argv[] )
     delete pool;
     return 0;
 }
-
