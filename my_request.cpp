@@ -5,7 +5,7 @@ const char* login_s = "Please input your username and password in this form: [us
 const char* name_too_long = "Sorry, your username is too long.\n";
 const char* name_occupied = "Sorry, your username is not available.\n";
 const char* password_incorrect = "Sorry, your username or/and password is/are not correct.\n";
-const char* request_message = "Please input reciver's username and message in this form: [reciver]+[message]\nExample: Frank+How are you?";
+const char* request_message = "Please input reciver's username and message in this form: [reciver]+[message]\nExample: Frank+How are you?\n";
 const char* reciver_not_exist = "Sorry, the reciver doesn't exist. Try some other people.\n";
 const char* message_too_long = "Sorry, yout message is too long.\n";
 
@@ -20,12 +20,16 @@ int setnonblocking( int fd )
     return old_option;
 }
 
-void addfd( int epollfd, int fd, bool one_shot )
+void addfd( int epollfd, int fd, bool one_shot, bool in )
 {
     epoll_event event;
     event.data.fd = fd;
-    event.events = EPOLLOUT | EPOLLET | EPOLLRDHUP;
-    if( one_shot )
+	if ( in ) {
+    	event.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
+	} else {
+		event.events = EPOLLOUT | EPOLLET | EPOLLRDHUP;
+	}
+	if( one_shot )
     {
         event.events |= EPOLLONESHOT;
     }
@@ -68,7 +72,7 @@ void my_request::init( int sockfd, const sockaddr_in& addr, std::unordered_map<s
     getsockopt( m_sockfd, SOL_SOCKET, SO_ERROR, &error, &len );
     int reuse = 1;
     setsockopt( m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof( reuse ) );
-    addfd( m_epollfd, sockfd, true );
+    addfd( m_epollfd, sockfd, true, false );
     m_user_count++;
 	m_name_map = map;
 	all_requests = all;
@@ -88,8 +92,8 @@ void my_request::process_login(char *name, char *password)
 
 	m_username = username;
 	m_status = ALIVE;
-	std::unordered_map<std::string, int> map = *m_name_map;
-	map[username] = m_sockfd;
+	//std::unordered_map<std::string, int> map = *m_name_map;
+	(*m_name_map)[username] = m_sockfd;
 	process_write( RECIVER_MESSAGE );
 }
 
@@ -98,17 +102,19 @@ void my_request::process_message(char *reciver, char *message)
 	std::string reci( reciver );
 	// TODO: check if reciver exists. This is check in map. Need to check in database as well
 	
-	std::unordered_map<std::string, int> map = *m_name_map;
-	std::unordered_map<std::string, int>::const_iterator got = map.find( reci );
-	if ( got == map.end() ) // cannot find
+	//std::unordered_map<std::string, int> map = *m_name_map;
+	std::unordered_map<std::string, int>::const_iterator got = m_name_map->find( reci );
+	if ( got == m_name_map->end() ) // cannot find
 	{
 		process_write( RECIVER_NOT_EXIST );
+		return;
 	}
 
 	// TODO: check if message if too long
 
 	// lookup other my_request and change its EVENT to EPOLLOUT
-	my_request* other = &(all_requests[ got->second ]);
+	process_write( RECIVER_MESSAGE );
+	my_request* other = all_requests + got->second;
 	strcpy( other->m_write_buf, message );
 	modfd(m_epollfd, got->second, EPOLLOUT);
 }
@@ -118,7 +124,7 @@ void my_request::process()
 {
 	char* p;
 	p = strpbrk( m_read_buf, "+" );
-	p = '\0';
+	*p = '\0';
 	p++;
 
 	if ( m_status == CONNECT )
@@ -223,7 +229,7 @@ bool my_request::write()
 {
     int temp = 0;
     int bytes_have_send = 0;
-    int bytes_to_send = strlen(m_read_buf);
+    int bytes_to_send = strlen(m_write_buf);
     if ( bytes_to_send == 0 )
     {
         modfd( m_epollfd, m_sockfd, EPOLLIN );

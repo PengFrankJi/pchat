@@ -18,7 +18,7 @@
 #define MAX_FD 65536
 #define MAX_EVENT_NUMBER 10000
 
-extern int addfd( int epollfd, int fd, bool one_shot );
+extern int addfd( int epollfd, int fd, bool one_shot, bool in );
 extern int removefd( int epollfd, int fd );
 
 void addsig( int sig, void( handler )(int), bool restart = true )
@@ -70,17 +70,19 @@ int main( int argc, char* argv[] )
 	//my_request::all_requests = users;
 	std::unordered_map<std::string, int> map;
 
-    int listenfd = socket( PF_INET, SOCK_STREAM, 0 );
+    int listenfd = socket( AF_INET, SOCK_STREAM, 0 );
     assert( listenfd >= 0 );
-    struct linger tmp = { 1, 0 };
-    setsockopt( listenfd, SOL_SOCKET, SO_LINGER, &tmp, sizeof( tmp ) );
+    fcntl(listenfd, F_SETFL, O_NONBLOCK);
+	//struct linger tmp = { 1, 0 };
+    //setsockopt( listenfd, SOL_SOCKET, SO_LINGER, &tmp, sizeof( tmp ) );
 
     int ret = 0;
     struct sockaddr_in address;
     bzero( &address, sizeof( address ) );
     address.sin_family = AF_INET;
-    inet_pton( AF_INET, ip, &address.sin_addr );
-    address.sin_port = htons( port );
+    //inet_pton( AF_INET, ip, &address.sin_addr );
+    address.sin_addr.s_addr = INADDR_ANY;
+	address.sin_port = htons( port );
 
     ret = bind( listenfd, ( struct sockaddr* )&address, sizeof( address ) );
     assert( ret >= 0 );
@@ -91,7 +93,7 @@ int main( int argc, char* argv[] )
     epoll_event events[ MAX_EVENT_NUMBER ];
     int epollfd = epoll_create( 5 );
     assert( epollfd != -1 );
-    addfd( epollfd, listenfd, false );
+    addfd( epollfd, listenfd, false, true );
     my_request::m_epollfd = epollfd;
 
     while( true )
