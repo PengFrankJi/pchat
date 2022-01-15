@@ -22,7 +22,12 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+//#include <mysql/mysql.h>
 #include "locker.h"
+#include "pool/sqlconnpool.h"
+#include "pool/sqlconnRAII.h"
+#include "log/log.h"
+
 
 class my_request
 {
@@ -43,7 +48,7 @@ class my_request
 		// RECIVER_MESSAGE: input reciver and message
 		// RECIVER_NOT_EXIST
 		// MESSAGE_TOO_LONG
-		enum RETURN_CODE {NAME_PASSWORD, NAME_TOO_LONG, NAME_OCCUPIED, PASSWORD_INCORRECT, RECIVER_MESSAGE, RECIVER_NOT_EXIST, MESSAGE_TOO_LONG};
+		enum RETURN_CODE {NAME_PASSWORD, NAME_TOO_LONG, NAME_OCCUPIED, PASSWORD_INCORRECT, RECIVER_MESSAGE, RECIVER_NOT_EXIST, MESSAGE_TOO_LONG, INTERNAL_ERROR};
 
 	public:
 		my_request() {}

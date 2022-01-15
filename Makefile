@@ -1,5 +1,5 @@
 CXX = g++
-PREFIX = -Wall -std=c++11
+PREFIX = -Wall -std=c++11 -g
 SUFFIX = -pthread -lmysqlclient
 
 TARGET = main

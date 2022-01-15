@@ -8,6 +8,7 @@ const char* password_incorrect = "Sorry, your username or/and password is/are no
 const char* request_message = "Please input reciver's username and message in this form: [reciver]+[message]\nExample: Frank+How are you?\n";
 const char* reciver_not_exist = "Sorry, the reciver doesn't exist. Try some other people.\n";
 const char* message_too_long = "Sorry, yout message is too long.\n";
+const char* internal_error = "Sorry, there is a internal error now. Please try again later.\n";
 
 int my_request::m_user_count = 0;
 int my_request::m_epollfd = -1;
@@ -84,17 +85,69 @@ void my_request::init( int sockfd, const sockaddr_in& addr, std::unordered_map<s
 
 void my_request::process_login(char *name, char *password)
 {
+	MYSQL* sql;
+	SqlConnRAII(&sql, SqlConnPool::Instance() );
+	assert(sql);
+
 	std::string username(name);
 	
-	// TODO: check if name is occupied
-
-	// TODO: check if password is correct
-
+	// check if there is infomation about 'name' in DB
+	char query[75];
+	sprintf(query, "select * from `users` where username = '%s'", name);
+	
+	if ( mysql_query(sql, query) )
+	{
+		LOG_ERROR("mysql_query failed.");
+		process_write( INTERNAL_ERROR );
+		return ;
+	}
+	else
+	{
+		MYSQL_RES *res = mysql_store_result(sql);
+		int n_rows;
+		if ( res && (n_rows = mysql_num_rows(res)) )
+		//there are rows in result
+		{
+			MYSQL_ROW row = mysql_fetch_row(res);
+			// check if password is correct
+			if (strcmp(row[1], password) == 0)
+			{
+				LOG_INFO("user %s [fd: %d] logs in successfully.", name, m_sockfd);
+			}
+			else
+			{
+				process_write( PASSWORD_INCORRECT );
+				return ;
+			}
+		}
+		else if (n_rows == 0)
+		{
+			// no data about this user, add it to database
+			LOG_INFO("new user %s [fd: %d] sign up.", name, m_sockfd);
+			sprintf(query, "insert into `users` values('%s', '%s')", name, password);
+			int ret = mysql_query(sql, query);
+			if (ret != 0)
+			{
+				LOG_ERROR( "Insertion into database failed." );
+				return;
+			}
+			else
+			{
+				LOG_INFO( "Insertion into database succeeded." );
+			}
+		}
+		else 
+		{
+			LOG_ERROR( "query failed" );
+			return ;
+		}
+	}	
+	
 	m_username = username;
 	m_status = ALIVE;
-	//std::unordered_map<std::string, int> map = *m_name_map;
 	(*m_name_map)[username] = m_sockfd;
 	process_write( RECIVER_MESSAGE );
+
 }
 
 void my_request::process_message(char *reciver, char *message)
@@ -123,9 +176,12 @@ void my_request::process_message(char *reciver, char *message)
 void my_request::process()
 {
 	char* p;
+	char* p2;
 	p = strpbrk( m_read_buf, "+" );
 	*p = '\0';
 	p++;
+	p2 = strpbrk( p, "\r\n" );
+	*p2 = '\0';
 
 	if ( m_status == CONNECT )
 	{
@@ -176,6 +232,11 @@ void my_request::process_write( RETURN_CODE code )
 		case MESSAGE_TOO_LONG:
 		{
 			strcpy( m_write_buf, message_too_long );
+			break;
+		}
+		case INTERNAL_ERROR:
+		{
+			strcpy( m_write_buf, internal_error );
 			break;
 		}
 		default:

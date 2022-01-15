@@ -1,0 +1,65 @@
+2022-01-15 12:26:26.149284 [info] : ========= Server init =========
+2022-01-15 12:26:26.149309 [info] : Port:9999
+2022-01-15 12:26:26.149317 [info] : LogSys level: 1
+2022-01-15 12:26:26.149322 [info] : sqlConn num: 12, ThreadPool num: 6
+2022-01-15 12:26:39.180358 [info] : new user comes.
+2022-01-15 12:26:39.180442 [info] : EPOLLOUT, write
+2022-01-15 12:28:53.358405 [info] : ========= Server init =========
+2022-01-15 12:28:53.358627 [info] : Port:9999
+2022-01-15 12:28:53.358634 [info] : LogSys level: 1
+2022-01-15 12:28:53.358639 [info] : sqlConn num: 12, ThreadPool num: 6
+2022-01-15 12:29:02.985302 [info] : new user comes.
+2022-01-15 12:29:02.985387 [info] : EPOLLOUT, write
+2022-01-15 12:34:25.829010 [info] : ========= Server init =========
+2022-01-15 12:34:25.829029 [info] : Port:9999
+2022-01-15 12:34:25.829035 [info] : LogSys level: 1
+2022-01-15 12:34:25.829040 [info] : sqlConn num: 12, ThreadPool num: 6
+2022-01-15 12:34:32.838549 [info] : new user comes.
+2022-01-15 12:34:32.838818 [info] : EPOLLOUT, write
+2022-01-15 12:39:24.036271 [info] : ========= Server init =========
+2022-01-15 12:39:24.036292 [info] : Port:9999
+2022-01-15 12:39:24.036301 [info] : LogSys level: 1
+2022-01-15 12:39:24.036307 [info] : sqlConn num: 12, ThreadPool num: 6
+2022-01-15 12:39:27.554221 [info] : new user comes.
+2022-01-15 12:39:27.554304 [info] : EPOLLOUT, write
+2022-01-15 12:41:28.205825 [info] : ========= Server init =========
+2022-01-15 12:41:28.205846 [info] : Port:9999
+2022-01-15 12:41:28.205854 [info] : LogSys level: 1
+2022-01-15 12:41:28.205861 [info] : sqlConn num: 12, ThreadPool num: 6
+2022-01-15 12:41:30.847973 [info] : new user comes.
+2022-01-15 12:41:30.848060 [info] : EPOLLOUT, write
+2022-01-15 12:43:00.669795 [info] : ========= Server init =========
+2022-01-15 12:43:00.669817 [info] : Port:9999
+2022-01-15 12:43:00.669826 [info] : LogSys level: 1
+2022-01-15 12:43:00.669832 [info] : sqlConn num: 12, ThreadPool num: 6
+2022-01-15 12:43:05.355097 [info] : new user comes.
+2022-01-15 12:43:05.355187 [info] : EPOLLOUT, write
+2022-01-15 12:43:09.959768 [info] : EPOLLIN, read
+2022-01-15 12:43:09.960236 [info] : EPOLLOUT, write
+2022-01-15 12:43:25.573757 [info] : EPOLLIN, read
+2022-01-15 12:43:25.574203 [info] : EPOLLOUT, write
+2022-01-15 12:43:54.340336 [info] : EPOLLIN, read
+2022-01-15 12:43:54.340796 [info] : EPOLLOUT, write
+2022-01-15 12:46:09.215713 [info] : ========= Server init =========
+2022-01-15 12:46:09.215735 [info] : Port:9999
+2022-01-15 12:46:09.215743 [info] : LogSys level: 1
+2022-01-15 12:46:09.215749 [info] : sqlConn num: 12, ThreadPool num: 6
+2022-01-15 12:46:12.014255 [info] : new user comes.
+2022-01-15 12:46:12.014335 [info] : EPOLLOUT, write
+2022-01-15 12:46:16.370049 [info] : EPOLLIN, read
+2022-01-15 12:46:16.370661 [info] : EPOLLOUT, write
+2022-01-15 12:46:21.504287 [info] : EPOLLIN, read
+2022-01-15 12:46:21.505333 [info] : user ceci [fd: 18] logs in successfully.
+2022-01-15 12:46:21.505558 [info] : EPOLLOUT, write
+2022-01-15 13:01:49.604169 [info] : new user comes.
+2022-01-15 13:01:49.604240 [info] : EPOLLOUT, write
+2022-01-15 13:02:07.102631 [info] : EPOLLIN, read
+2022-01-15 13:02:07.102954 [info] : new user frank [fd: 19] sign up.
+2022-01-15 13:02:07.105394 [info] : Insertion into database succeeded.
+2022-01-15 13:02:07.105455 [info] : EPOLLOUT, write
+2022-01-15 13:02:15.106884 [info] : EPOLLIN, read
+2022-01-15 13:02:15.106982 [info] : EPOLLOUT, write
+2022-01-15 13:02:15.107009 [info] : EPOLLOUT, write
+2022-01-15 13:03:27.361388 [info] : EPOLLIN, read
+2022-01-15 13:03:27.361490 [info] : EPOLLOUT, write
+2022-01-15 13:03:27.361525 [info] : EPOLLOUT, write
