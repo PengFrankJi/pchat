@@ -63,3 +63,25 @@
 2022-01-15 13:03:27.361388 [info] : EPOLLIN, read
 2022-01-15 13:03:27.361490 [info] : EPOLLOUT, write
 2022-01-15 13:03:27.361525 [info] : EPOLLOUT, write
+2022-01-15 13:43:28.906816 [info] : ========= Server init =========
+2022-01-15 13:43:28.906842 [info] : Port:9999
+2022-01-15 13:43:28.906850 [info] : LogSys level: 1
+2022-01-15 13:43:28.906857 [info] : sqlConn num: 12, ThreadPool num: 6
+2022-01-15 13:43:39.167056 [info] : new user comes.
+2022-01-15 13:43:39.167153 [info] : EPOLLOUT, write
+2022-01-15 13:43:45.464314 [info] : EPOLLIN, read
+2022-01-15 13:43:45.488889 [info] : user frank [fd: 18] logs in successfully.
+2022-01-15 13:43:45.488964 [info] : EPOLLOUT, write
+2022-01-15 13:45:39.958320 [info] : ========= Server init =========
+2022-01-15 13:45:39.958341 [info] : Port:9999
+2022-01-15 13:45:39.958350 [info] : LogSys level: 1
+2022-01-15 13:45:39.958356 [info] : sqlConn num: 12, ThreadPool num: 6
+2022-01-15 13:45:42.423332 [info] : new user comes.
+2022-01-15 13:45:42.423414 [info] : EPOLLOUT, write
+2022-01-15 13:45:46.969925 [info] : EPOLLIN, read
+2022-01-15 13:45:46.970417 [info] : EPOLLOUT, write
+2022-01-15 13:45:54.816745 [info] : EPOLLIN, read
+2022-01-15 13:45:54.817368 [info] : EPOLLOUT, write
+2022-01-15 13:46:00.814624 [info] : EPOLLIN, read
+2022-01-15 13:46:00.815281 [info] : user frank [fd: 18] logs in successfully.
+2022-01-15 13:46:00.815356 [info] : EPOLLOUT, write
